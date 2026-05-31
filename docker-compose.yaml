@@ -33,6 +33,10 @@ services:
   blog:
     build:
       context: /home/ubuntu/repos/blog
+    container_name: blog
+    restart: unless-stopped
+    networks:
+      - private
 
 volumes:
   postgis_data:
