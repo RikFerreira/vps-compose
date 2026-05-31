@@ -12,6 +12,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/servers.conf:/etc/nginx/conf.d/servers.conf:ro
+      - ./nginx/blank/index.html:/usr/share/nginx/html/index.html:ro
 
   # ARM64 version
   postgis:
