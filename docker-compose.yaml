@@ -1,0 +1,35 @@
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - public
+
+  postgis:
+    image: postgis/postgis:18-3.6
+    container_name: postgis
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql/data   
+    networks:
+      - private
+
+volumes:
+  postgis_data:
+    driver: local
+
+networks:
+  public:
+    driver: bridge
+  private:
+    driver: bridge
