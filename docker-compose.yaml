@@ -29,6 +29,10 @@ services:
       - postgis_data:/var/lib/postgresql/data   
     networks:
       - private
+  
+  blog:
+    build:
+      context: /home/ubuntu/repos/blog
 
 volumes:
   postgis_data:
