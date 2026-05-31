@@ -8,6 +8,10 @@ services:
       - "443:443"
     networks:
       - public
+    depends_on:
+      - postgis
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
 
   # ARM64 version
   postgis:
