@@ -10,7 +10,7 @@ services:
       - public
 
   postgis:
-    image: postgis/postgis:17-3.6
+    image: postgis/postgis:17-3.5
     container_name: postgis
     restart: unless-stopped
     environment:
