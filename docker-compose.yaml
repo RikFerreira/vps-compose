@@ -5,14 +5,15 @@ services:
     restart: always
     ports:
       - "80:80"
-      - "443:443"
+      # - "443:443"
     networks:
       - private
       - public
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/servers.conf:/etc/nginx/conf.d/servers.conf:ro
-      - ./nginx/blank/index.html:/usr/share/nginx/html/index.html:ro
+    depends_on:
+      - blog
 
   # ARM64 version
   postgis:
@@ -32,7 +33,8 @@ services:
   
   blog:
     build:
-      context: /home/ubuntu/repos/blog
+      context: /home/ubuntu/repos/rikalves
+      dockerfile: Dockerfile
     container_name: blog
     restart: unless-stopped
     networks:
