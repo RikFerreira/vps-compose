@@ -9,8 +9,9 @@ services:
     networks:
       - public
 
+  # ARM64 version
   postgis:
-    image: postgis/postgis:17-3.5
+    image: kartoza/postgis:18.4-3.6.3--v2026.05.21
     container_name: postgis
     restart: unless-stopped
     environment:
