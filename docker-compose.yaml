@@ -33,7 +33,7 @@ services:
   
   blog:
     build:
-      context: ./rikalves
+      context: ./services/rikalves
       dockerfile: Dockerfile
     container_name: blog
     restart: unless-stopped

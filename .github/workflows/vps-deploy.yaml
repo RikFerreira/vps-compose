@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+  
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -12,13 +14,19 @@ jobs:
     steps:
       - name: Checkout main repo
         uses: actions/checkout@v4
-      
-      - name: Checkout blog repo
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          repository: RikFerreira/rikalves
-          path: ./rikalves
-          
+
+      - name: Update git submodules
+        run: |
+          git submodule sync --recursive
+          git submodule update --init --recursive
+          git config --file .gitmodules --get-regexp 'submodule\..*\.path' \
+            | awk '{print $2}' \
+            | grep '^services/' \
+            | while read path; do
+                git submodule update --remote "$path"
+                git -C "$path" submodule sync --recursive
+                git -C "$path" submodule update --init --recursive
+              done
+
       - name: Build docker compose
         run: docker compose up -d --build --force-recreate

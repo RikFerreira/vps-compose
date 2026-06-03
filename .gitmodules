@@ -1,0 +1,3 @@
+[submodule "services/rikalves"]
+	path = services/rikalves
+	url = https://github.com/rikferreira/rikalves.git
