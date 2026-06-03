@@ -10,12 +10,6 @@ jobs:
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
-      # - run: |
-      #     rm -rf *
-      #     git clone https://github.com/RikFerreira/vps-compose.git
-      #     git clone --recurse-submodules https://github.com/RikFerreira/rikalves.git
-      #     cd vps-compose
-      #     docker compose up -d --build --force-recreate
       - name: Checkout main repo
         uses: actions/checkout@v4
       
@@ -25,5 +19,6 @@ jobs:
           submodules: recursive
           repository: RikFerreira/rikalves
           path: ./rikalves
+          
       - name: Build docker compose
         run: docker compose up -d --build --force-recreate
