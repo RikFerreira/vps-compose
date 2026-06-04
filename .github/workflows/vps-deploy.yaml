@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-  
+
   workflow_dispatch:
 
 jobs:
@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout main repo
         uses: actions/checkout@v4
+        with:
+          clean: false
 
       - name: Update git submodules
         run: |
@@ -28,5 +30,26 @@ jobs:
                 git -C "$path" submodule update --init --recursive
               done
 
-      - name: Build docker compose
+      - name: Ensure SSL certificates
+        run: |
+          mkdir -p certbot/conf certbot/www
+
+          if [ ! -f certbot/conf/live/rikalves.com/fullchain.pem ]; then
+            # Swap in HTTP-only bootstrap config so nginx can start without certs
+            cp nginx/servers-bootstrap.conf nginx/servers.conf
+            trap 'git checkout -- nginx/servers.conf' EXIT
+
+            # Start nginx alone (no deps — blog not needed for ACME challenge)
+            docker compose up -d --no-deps nginx
+            sleep 5
+
+            # Obtain certificate via webroot
+            docker compose run --rm certbot certonly --webroot \
+              -w /var/www/certbot \
+              -d rikalves.com -d www.rikalves.com \
+              --email geotecnologias@tpfe.com.br --agree-tos --no-eff-email \
+              --non-interactive
+          fi
+
+      - name: Deploy
         run: docker compose up -d --build --force-recreate

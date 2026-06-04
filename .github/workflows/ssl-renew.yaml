@@ -1,0 +1,23 @@
+name: ssl-renew
+
+on:
+  schedule:
+    - cron: '0 3 1,15 * *'
+  workflow_dispatch:
+
+jobs:
+  renew:
+    runs-on: self-hosted
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          clean: false
+
+      - name: Renew certificates
+        run: docker compose run --rm certbot renew
+
+      - name: Reload nginx
+        run: docker exec nginx nginx -s reload
