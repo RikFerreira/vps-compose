@@ -10,11 +10,39 @@ jobs:
     runs-on: self-hosted
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      SERVER_NAME: ${{ secrets.SERVER_NAME }}
+      SERVER_NAME_WWW: ${{ secrets.SERVER_NAME_WWW }}
+      LETSENCRYPT_EMAIL: ${{ secrets.LETSENCRYPT_EMAIL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           clean: false
+
+      - name: Render runtime .env
+        run: |
+          test -n "$POSTGRES_USER"
+          test -n "$POSTGRES_PASSWORD"
+          test -n "$POSTGRES_DB"
+          test -n "$SERVER_NAME"
+          test -n "$SERVER_NAME_WWW"
+          test -n "$LETSENCRYPT_EMAIL"
+
+          mkdir -p certbot/conf certbot/www
+
+          {
+            printf 'POSTGRES_USER=%s\n' "$POSTGRES_USER"
+            printf 'POSTGRES_PASSWORD=%s\n' "$POSTGRES_PASSWORD"
+            printf 'POSTGRES_DB=%s\n' "$POSTGRES_DB"
+            printf 'SERVER_NAME=%s\n' "$SERVER_NAME"
+            printf 'SERVER_NAME_WWW=%s\n' "$SERVER_NAME_WWW"
+            printf 'LETSENCRYPT_EMAIL=%s\n' "$LETSENCRYPT_EMAIL"
+          } > .env
+
+          chmod 600 .env
 
       - name: Renew certificates
         run: docker compose run --rm certbot renew

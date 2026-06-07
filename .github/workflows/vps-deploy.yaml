@@ -11,11 +11,39 @@ jobs:
     runs-on: self-hosted
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      SERVER_NAME: ${{ secrets.SERVER_NAME }}
+      SERVER_NAME_WWW: ${{ secrets.SERVER_NAME_WWW }}
+      LETSENCRYPT_EMAIL: ${{ secrets.LETSENCRYPT_EMAIL }}
     steps:
       - name: Checkout main repo
         uses: actions/checkout@v4
         with:
           clean: false
+
+      - name: Render runtime .env
+        run: |
+          test -n "$POSTGRES_USER"
+          test -n "$POSTGRES_PASSWORD"
+          test -n "$POSTGRES_DB"
+          test -n "$SERVER_NAME"
+          test -n "$SERVER_NAME_WWW"
+          test -n "$LETSENCRYPT_EMAIL"
+
+          mkdir -p certbot/conf certbot/www
+
+          {
+            printf 'POSTGRES_USER=%s\n' "$POSTGRES_USER"
+            printf 'POSTGRES_PASSWORD=%s\n' "$POSTGRES_PASSWORD"
+            printf 'POSTGRES_DB=%s\n' "$POSTGRES_DB"
+            printf 'SERVER_NAME=%s\n' "$SERVER_NAME"
+            printf 'SERVER_NAME_WWW=%s\n' "$SERVER_NAME_WWW"
+            printf 'LETSENCRYPT_EMAIL=%s\n' "$LETSENCRYPT_EMAIL"
+          } > .env
+
+          chmod 600 .env
 
       - name: Update git submodules
         run: |
@@ -32,9 +60,7 @@ jobs:
 
       - name: Ensure SSL certificates
         run: |
-          mkdir -p certbot/conf certbot/www
-
-          if [ ! -f certbot/conf/live/rikalves.com/fullchain.pem ]; then
+          if [ ! -f "certbot/conf/live/${SERVER_NAME}/fullchain.pem" ]; then
             # Swap in HTTP-only bootstrap config so nginx can start without certs
             cp nginx/servers-bootstrap.conf nginx/servers.conf
             trap 'git checkout -- nginx/servers.conf' EXIT
@@ -46,8 +72,8 @@ jobs:
             # Obtain certificate via webroot
             docker compose run --rm certbot certonly --webroot \
               -w /var/www/certbot \
-              -d rikalves.com -d www.rikalves.com \
-              --email geotecnologias@tpfe.com.br --agree-tos --no-eff-email \
+              -d "$SERVER_NAME" -d "$SERVER_NAME_WWW" \
+              --email "$LETSENCRYPT_EMAIL" --agree-tos --no-eff-email \
               --non-interactive
           fi
 

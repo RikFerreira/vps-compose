@@ -12,6 +12,8 @@ All imediate submodules in `services/` directory must be updated to the latest r
 
 All grandson submodules are part of the development of each service. The development of their services is responsible for their own updates. This repo must not update all second-level and greater grandson submodules.
 
+Refer to docker-compose.yaml and mentioned files for networking and service configuration.
+
 ### Basic CI workflow
 
 1. Download all the submodules (recursively) (specific directories/services must not be hardcoded)
