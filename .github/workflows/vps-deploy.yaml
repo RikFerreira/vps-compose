@@ -52,4 +52,4 @@ jobs:
           fi
 
       - name: Deploy
-        run: docker compose up -d --build --force-recreate
+        run: docker compose --env-file /home/ubuntu/secrets/postgres up -d --build --force-recreate
