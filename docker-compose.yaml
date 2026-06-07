@@ -33,7 +33,7 @@ services:
       - POSTGRES_PASS=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DBNAME}
     ports:
-      - "127.0.0.1:5432:5432"
+      - "54322:5432"
     volumes:
       - postgis_data:/var/lib/postgresql
     networks:
