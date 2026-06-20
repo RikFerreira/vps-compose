@@ -1,0 +1,23 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "read": { // Accepts object of blob patterns
+      "*": "allow",
+      ".claude": "ask"
+    },
+    "edit": "ask", // Accepts object of blob patterns
+    "glob": "allow", // Accepts object of blob patterns
+    "grep": "allow", // Accepts object of blob patterns
+    "list": "allow", // Accepts object of blob patterns
+    "bash": "ask", // Accepts object of blob patterns
+    "task": "ask", // Accepts object of blob patterns
+    "external_directory": "ask", // Accepts object of blob patterns
+    "todowrite": "allow",
+    "webfetch": "ask",
+    "websearch": "allow",
+    "lsp": "allow", // Accepts object of blob patterns
+    "skill": "allow", // Accepts object of blob patterns
+    "question": "allow",
+    "doom_loop": "ask"
+  }
+}

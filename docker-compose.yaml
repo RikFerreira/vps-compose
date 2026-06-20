@@ -39,14 +39,14 @@ services:
     networks:
       - private
 
-  blog:
-    build:
-      context: ./services/rikalves
-      dockerfile: Dockerfile
-    container_name: blog
-    restart: unless-stopped
-    networks:
-      - private
+  # blog:
+  #   build:
+  #     context: ./services/rikalves
+  #     dockerfile: Dockerfile
+  #   container_name: blog
+  #   restart: unless-stopped
+  #   networks:
+  #     - private
 
 volumes:
   postgis_data:
